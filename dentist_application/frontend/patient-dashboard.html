@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard - DentalCare</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dashboard-page">
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>DentalCare</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-section="appointments">
+                <span class="icon">📋</span>
+                <span>My Appointments</span>
+            </a>
+            <a href="#" class="nav-item" data-section="doctors">
+                <span class="icon">👨‍⚕️</span>
+                <span>Find Doctors</span>
+            </a>
+            <a href="#" class="nav-item" data-section="profile">
+                <span class="icon">👤</span>
+                <span>My Profile</span>
+            </a>
+            <a href="#" class="nav-item" onclick="logout()">
+                <span class="icon">🚪</span>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="top-bar">
+            <h1 id="pageTitle">My Appointments</h1>
+            <div class="user-info">
+                <button id="darkModeToggle" class="dark-mode-btn" title="Toggle Dark Mode">🌙</button>
+                <span id="userName">Welcome</span>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <!-- Appointments Section -->
+            <section id="appointments-section" class="content-section active">
+                <div class="section-header">
+                    <h2>Your Appointments</h2>
+                    <a href="#" class="btn btn-primary btn-sm" data-section="doctors">+ Book New</a>
+                </div>
+                <div id="appointmentsList" class="appointments-list">
+                    <div class="loading">Loading your appointments...</div>
+                </div>
+            </section>
+
+            <!-- Doctors Section -->
+            <section id="doctors-section" class="content-section">
+                <div class="section-header">
+                    <h2>Find a Doctor</h2>
+                    <input type="text" id="doctorSearch" placeholder="Search by specialization..." class="search-input">
+                </div>
+                <div id="doctorsList" class="doctors-grid">
+                    <div class="loading">Loading doctors...</div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile-section" class="content-section">
+                <div class="section-header">
+                    <h2>My Profile</h2>
+                </div>
+                <div class="profile-card">
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="profileName">Full Name</label>
+                            <input type="text" id="profileName" name="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profileEmail">Email</label>
+                            <input type="email" id="profileEmail" name="email" required readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profilePhone">Phone</label>
+                            <input type="tel" id="profilePhone" name="phone" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profileDOB">Date of Birth</label>
+                            <input type="date" id="profileDOB" name="dateOfBirth">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profileAddress">Address</label>
+                            <textarea id="profileAddress" name="address" rows="3"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                        <div id="profileMessage" class="message"></div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Appointment Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Book Appointment</h2>
+            <form id="bookAppointmentForm">
+                <div class="form-group">
+                    <label for="appointmentDoctor">Doctor</label>
+                    <input type="text" id="appointmentDoctor" readonly>
+                    <input type="hidden" id="appointmentDoctorId">
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentDate">Date</label>
+                    <input type="date" id="appointmentDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentTime">Time</label>
+                    <input type="time" id="appointmentTime" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentReason">Reason for Visit</label>
+                    <select id="appointmentReason" required>
+                        <option value="">Select reason</option>
+                        <option value="Checkup">Regular Checkup</option>
+                        <option value="Cleaning">Teeth Cleaning</option>
+                        <option value="Filling">Cavity Filling</option>
+                        <option value="Root Canal">Root Canal</option>
+                        <option value="Braces">Braces Consultation</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentDescription">Additional Notes</label>
+                    <textarea id="appointmentDescription" rows="3" placeholder="Any additional information..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Confirm Appointment</button>
+                <div id="appointmentError" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

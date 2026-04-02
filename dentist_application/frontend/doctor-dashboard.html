@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - DentalCare</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dashboard-page">
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>DentalCare</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-section="dashboard">
+                <span class="icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-section="appointments">
+                <span class="icon">📋</span>
+                <span>Appointments</span>
+            </a>
+            <a href="#" class="nav-item" data-section="profile">
+                <span class="icon">👤</span>
+                <span>My Profile</span>
+            </a>
+            <a href="#" class="nav-item" onclick="logout()">
+                <span class="icon">🚪</span>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="top-bar">
+            <h1 id="pageTitle">Dashboard</h1>
+            <div class="user-info">
+                <button id="darkModeToggle" class="dark-mode-btn" title="Toggle Dark Mode">🌙</button>
+                <span id="userName">Welcome, Doctor</span>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <h3>Total Patients</h3>
+                            <p id="totalPatients" class="stat-number">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-info">
+                            <h3>Total Appointments</h3>
+                            <p id="totalAppointments" class="stat-number">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-info">
+                            <h3>Rating</h3>
+                            <p id="doctorRating" class="stat-number">0/5</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info">
+                            <h3>Completed</h3>
+                            <p id="completedAppointments" class="stat-number">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-header" style="margin-top: 2rem;">
+                    <h2>Upcoming Appointments</h2>
+                </div>
+                <div id="upcomingAppointments" class="appointments-list">
+                    <div class="loading">Loading appointments...</div>
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section id="appointments-section" class="content-section">
+                <div class="section-header">
+                    <h2>All Appointments</h2>
+                </div>
+                <div id="allAppointments" class="appointments-list">
+                    <div class="loading">Loading appointments...</div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile-section" class="content-section">
+                <div class="section-header">
+                    <h2>Professional Profile</h2>
+                </div>
+                <div class="profile-card">
+                    <form id="doctorProfileForm">
+                        <div class="form-group">
+                            <label for="profileImage">Profile Image</label>
+                            <input type="file" id="profileImage" name="profileImage" accept="image/*">
+                            <div id="imagePreview" class="image-preview"></div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="doctorName">Full Name</label>
+                                <input type="text" id="doctorName" name="name" required readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="doctorEmail">Email</label>
+                                <input type="email" id="doctorEmail" name="email" required readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="specialization">Specialization</label>
+                                <select id="specialization" name="specialization" required>
+                                    <option value="">Select Specialization</option>
+                                    <option value="General Dentistry">General Dentistry</option>
+                                    <option value="Orthodontics">Orthodontics</option>
+                                    <option value="Periodontics">Periodontics</option>
+                                    <option value="Endodontics">Endodontics</option>
+                                    <option value="Oral Surgery">Oral Surgery</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="yearsOfExperience">Years of Experience</label>
+                                <input type="number" id="yearsOfExperience" name="yearsOfExperience" min="0" max="60" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="licenseNumber">License Number</label>
+                            <input type="text" id="licenseNumber" name="licenseNumber" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="qualifications">Qualifications</label>
+                            <textarea id="qualifications" name="qualifications" rows="3" placeholder="Enter your qualifications (comma-separated)"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bio">Biography</label>
+                            <textarea id="bio" name="bio" rows="4" placeholder="Tell patients about yourself..."></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="consultationFee">Consultation Fee ($)</label>
+                                <input type="number" id="consultationFee" name="consultationFee" min="0" step="0.01" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                        <div id="profileMessage" class="message"></div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
