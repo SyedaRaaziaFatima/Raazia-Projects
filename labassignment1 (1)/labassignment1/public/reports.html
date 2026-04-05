@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="page">
+  <h2>Register</h2>
+  <div id="msg" class="msg"></div>
+
+  <form id="registerForm">
+    <label>Username</label>
+    <input type="text" id="username" required>
+
+    <label>Password</label>
+    <input type="password" id="password" required>
+
+    <label>Role</label>
+    <select id="role">
+      <option value="Student">Student</option>
+      <option value="Admin">Admin</option>
+    </select>
+
+    <button type="submit" class="btn btn-blue">Register</button>
+  </form>
+
+  <p>Already have an account? <a href="login.html">Login</a></p>
+</div>
+
+<script>
+const msg = document.getElementById('msg');
+
+// Handle registration
+document.getElementById('registerForm').onsubmit = async e => {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const role = document.getElementById('role').value;
+
+    const res = await fetch('/api/users/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, role })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+        msg.className = 'msg ok';
+        msg.textContent = 'Registered successfully! Redirecting to login...';
+        msg.style.display = 'block';
+        setTimeout(() => window.location.href = 'login.html', 2000);
+    } else {
+        msg.className = 'msg err';
+        msg.textContent = data.error || 'Registration failed';
+        msg.style.display = 'block';
+        setTimeout(() => msg.style.display = 'none', 3000);
+    }
+};
+</script>
+
+</body>
+</html>

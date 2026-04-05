@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav id="nav"></nav>
+
+<div class="page">
+    <h2 id="pageTitle">Dashboard</h2>
+
+```
+<!-- Admin View -->
+<div id="adminView" style="display:none">
+    <div class="stats">
+        <div class="box"><div class="big-num" id="totalBooks">-</div><div class="small-text">Total Books</div></div>
+        <div class="box green"><div class="big-num" id="availableBooks">-</div><div class="small-text">Available</div></div>
+        <div class="box orange"><div class="big-num" id="issuedBooks">-</div><div class="small-text">Issued</div></div>
+        <div class="box purple"><div class="big-num" id="totalStudents">-</div><div class="small-text">Students</div></div>
+        <div class="box red"><div class="big-num" id="overdueBooks">-</div><div class="small-text">Overdue</div></div>
+    </div>
+
+    <h2>Issued Books</h2>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th><th>Book</th><th>Student</th><th>Roll No</th><th>Issue Date</th><th>Due Date</th><th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="issuedTbody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Student View -->
+<div id="studentView" style="display:none">
+    <p style="margin-bottom:16px; color:#555">
+        Welcome <strong id="stuName"></strong>! Your issued books:
+    </p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th><th>Book</th><th>Issue Date</th><th>Due Date</th><th>Status</th><th>Fine</th>
+                </tr>
+            </thead>
+            <tbody id="myBooksTbody"></tbody>
+        </table>
+    </div>
+
+    <div style="margin-top:16px; display:flex; gap:10px">
+        <a href="view-books.html" class="btn btn-blue">Browse Books</a>
+        <a href="request-issue.html" class="btn btn-green">Request a Book</a>
+    </div>
+</div>
+```
+
+</div>
+
+<script src="js/app.js"></script>
+
+<script>
+
+// ✅ Get user from localStorage
+function getUser() {
+    return JSON.parse(localStorage.getItem('user'));
+}
+
+// Initialize dashboard
+async function initDashboard() {
+    const user = getUser();
+
+    // ❌ Not logged in
+    if (!user) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    buildNav('index.html');
+
+    // ================= ADMIN =================
+    if (user.role === 'Admin') {
+
+        document.getElementById('adminView').style.display = 'block';
+        document.getElementById('pageTitle').textContent = 'Admin Dashboard';
+
+        // Stats
+        const statsRes = await api('GET', '/api/dashboard/stats');
+        if (statsRes.data) {
+            ['totalBooks','availableBooks','issuedBooks','totalStudents','overdueBooks']
+            .forEach(id => {
+                document.getElementById(id).textContent = statsRes.data[id] || 0;
+            });
+        }
+
+        // Issued books
+        const issuesRes = await api('GET','/api/issues/all');
+
+        fillTable('issuedTbody', issuesRes.data.map((x,i) => {
+            const due = new Date(new Date(x.issueDate).getTime() + 7*24*60*60*1000);
+
+            return `<tr>
+                <td>${i+1}</td>
+                <td>${x.book?.title || 'N/A'}</td>
+                <td>${x.student?.name || 'N/A'}</td>
+                <td>${x.student?.rollNumber || '-'}</td>
+                <td>${formatDate(x.issueDate)}</td>
+                <td>${formatDate(due)}</td>
+                <td>${statusBadge(x.status, x.issueDate)}</td>
+            </tr>`;
+        }), 'No books issued yet.');
+
+    }
+
+    // ================= STUDENT =================
+    else {
+
+        document.getElementById('studentView').style.display = 'block';
+        document.getElementById('pageTitle').textContent = 'My Books';
+        document.getElementById('stuName').textContent = user.username;
+
+        const myBooksRes = await api('GET','/api/users/my-books/' + user.studentId);
+
+        fillTable('myBooksTbody', myBooksRes.data.map((x,i) => {
+            const due = new Date(new Date(x.issueDate).getTime() + 7*24*60*60*1000);
+
+            return `<tr>
+                <td>${i+1}</td>
+                <td>${x.book?.title || 'N/A'}</td>
+                <td>${formatDate(x.issueDate)}</td>
+                <td>${formatDate(due)}</td>
+                <td>${statusBadge(x.status, x.issueDate)}</td>
+                <td>${x.fine > 0 ? 'PKR ' + x.fine : '-'}</td>
+            </tr>`;
+        }), 'No books issued yet.');
+    }
+}
+
+// Helper: fill table
+function fillTable(tbodyId, rows, emptyMessage) {
+    const tbody = document.getElementById(tbodyId);
+    tbody.innerHTML = rows.length
+        ? rows.join('')
+        : `<tr><td colspan="7" style="text-align:center">${emptyMessage}</td></tr>`;
+}
+
+// Run
+initDashboard();
+
+</script>
+
+</body>
+</html>
